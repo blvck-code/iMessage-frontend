@@ -2,6 +2,9 @@ import { Button, Center, Image, Input, Stack, Text } from "@chakra-ui/react";
 import { Session } from "next-auth";
 import { signIn } from "next-auth/react";
 import { useState } from "react";
+import { useMutation } from "@apollo/client";
+import UserOperations from "@/graphql/operations/user";
+import { CreateUsernameData, CreateUsernameVariables } from "@/utils/types";
 
 interface IAuthProps {
   session: Session | null;
@@ -10,15 +13,19 @@ interface IAuthProps {
 
 const Auth: React.FC<IAuthProps> = ({ session, reloadSession }) => {
   const [username, setUsername] = useState("");
+  const [createUsername, { data, loading, error }] = useMutation<
+    CreateUsernameData,
+    CreateUsernameVariables
+  >(UserOperations.Mutations.createUsername);
+
   const onSubmit = async () => {
     try {
-      /**
-       * createUsername mutation
-       */
+      await createUsername({ variables: { username } });
     } catch (error) {
       console.log("onSubmit error =>", error);
     }
   };
+
   return (
     <Center height="100vh">
       <Stack alignItems="center" spacing={8}>
@@ -45,7 +52,8 @@ const Auth: React.FC<IAuthProps> = ({ session, reloadSession }) => {
                   alt="google logo"
                 />
               }
-              onClick={() => signIn("google")}>
+              onClick={() => signIn("google")}
+            >
               Continue with Google
             </Button>
           </>

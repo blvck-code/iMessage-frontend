@@ -26,7 +26,9 @@ const Auth: React.FunctionComponent<IAuthProps> = ({
   const onSubmit = async () => {
     if (!username) return;
     try {
-      await createUsername({ variables: { username } });
+      /**
+       * createUsername mutation
+       */
     } catch (error) {
       console.log("onSubmit error =>", error);
     }

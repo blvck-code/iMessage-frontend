@@ -14,4 +14,15 @@ export default NextAuth({
     }),
   ],
   secret: process.env.NEXTAUTH_SECRET,
+  callbacks: {
+    async session({ session, token, user }) {
+      console.log("inside session callback");
+      // send properties to the client, like an access_token from a provider
+      const sessionUser = { ...session.user, ...user };
+      return {
+        ...session,
+        user: sessionUser,
+      };
+    },
+  },
 });

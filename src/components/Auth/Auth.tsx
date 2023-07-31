@@ -16,12 +16,13 @@ const Auth: React.FunctionComponent<IAuthProps> = ({
   reloadSession,
 }) => {
   const [username, setUsername] = useState("");
+
   const [createUsername, { data, loading, error }] = useMutation<
     CreateUsernameData,
     CreateUsernameVariable
   >(UserOperations.Mutations.createUsername);
 
-  console.log("Data =>", data, loading, error);
+  console.log("Create username mutation Data =>", data);
 
   const onSubmit = async () => {
     if (!username) return;
@@ -29,6 +30,27 @@ const Auth: React.FunctionComponent<IAuthProps> = ({
       /**
        * createUsername mutation
        */
+      const { data } = await createUsername({
+        variables: {
+          username,
+        },
+      });
+
+      if (!data?.createUsername) {
+        throw new Error();
+      }
+
+      if (data.createUsername.error) {
+        const {
+          createUsername: { error },
+        } = data;
+
+        throw new Error(error);
+      }
+
+      console.log("User created response ==>>", data);
+      // Reload session to obtain new username
+      reloadSession();
     } catch (error) {
       console.log("onSubmit error =>", error);
     }
